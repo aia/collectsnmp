@@ -1,0 +1,55 @@
+<snmp>
+<datatypes type="array">
+<datadef>
+	<name>ifmib-if-octets64</name>
+	<instance>1.3.6.1.2.1.31.1.1.1.1</instance>
+	<values>1.3.6.1.2.1.31.1.1.1.6 1.3.6.1.2.1.31.1.1.1.10</values>
+	<dst>COUNTER</dst>
+	<range>0:U</range>
+</datadef>
+<datadef>
+<hosts type="array">
+	<hostdef>
+		<name>host1</name>
+		<idprefix>111</idprefix>
+		<address>1.1.1.1</address>
+		<version>2c</version>
+		<community>public</community>
+	</hostdef>
+</hosts>
+<writers type="array">
+	<writerdef>
+		<type>RRD</type>
+		<config>
+			<name>RRD1</name>
+			<rra>RRA:AVERAGE:0.5:1:4608 RRA:AVERAGE:0.5:5:4032</rra>
+			<write_path>/some/log/path</write_path>
+			<interval>150</interval>
+		</config>
+	</writerdef>
+</writers>
+<tasks type="array">
+	<taskdef>
+		<type>Poll</type>
+		<config>
+			<name>collect-host1</name>
+			<log_path>/some/log/path</log_path>
+			<host>host1</host>
+			<data>ifmib-if-octets64</data>
+			<interval>150</interval>
+			<writers>RRD1</writers>
+		</config>
+	</taskdef>
+	<taskdef>
+		<type>Drraw</type>
+		<config>
+			<name>drraw</name>
+			<interval>150</interval>
+			<log_path>/some/log/path</log_path>
+			<drraw_path>/some/drraw/path</drraw_path>
+			<rrd_path>/some/rrd/path</rrd_path>
+			<erb_path>/some/erb/path</erb_path>
+		</config>
+	</taskdef>
+</tasks>
+</snmp>

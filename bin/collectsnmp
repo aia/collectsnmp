@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+
+require 'rubygems'
+require 'xmlsimple'
+require 'pp'
+require 'collectsnmp'
+
+
+out = XmlSimple.xml_in(ARGV[0].to_s, 'ForceArray' => ["datadef","hostdef", "taskdef", "writerdef"])
+
+CollectSnmp::load(
+	out["datatypes"]["datadef"],
+	out["hosts"]["hostdef"],
+	out["writers"]["writerdef"],
+	out["tasks"]["taskdef"]
+)
+
+CollectSnmp::Tasks::hub.run
