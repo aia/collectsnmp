@@ -1,19 +1,104 @@
-= collectsnmp
+== Overview
+CollectSNMP is an application that 
+ * Runs Simple Network Management Protocol (SNMP) queries,
+ * Creates and updates corresponding Round-Robin Database (RRD) files,
+ * Generates, updates, and indexes DRRAW (http://web.taranis.org/drraw/) graphs,
+ * Supports plugin-like extensions that add custom tasks and SNMP data writers 
 
-Description goes here.
 
-== Contributing to collectsnmp
- 
-* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
-* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
-* Fork the project
-* Start a feature/bugfix branch
-* Commit and push until you are happy with your contribution
-* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
-* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+== Usage
+Install, include, run: 
+ * gem install collectsnmp
 
-== Copyright
+ * require 'collectsnmp'
+And/or
+ * collectsnmp <xml-configuration>
 
-Copyright (c) 2011 Artem. See LICENSE.txt for
-further details.
 
+== Description
+CollectSNMP was written to replace collectd[http://collectd.org/]. Unlike collectd, CollectSNMP focuses exclusively on Simple Network Management Protocol (SNMP[http://en.wikipedia.org/wiki/SNMP]) data collection and Round Robin Database (RRD[http://en.wikipedia.org/wiki/RRDtool]) file management. Also, {unlike collectd}[http://www.mail-archive.com/collectd%40verplant.org/msg00500.html], CollectSNMP is able query vendor-specific SNMP MIBs[http://en.wikipedia.org/wiki/Management_information_base].
+
+Working in tandem, CollectSNMP and DRRAW[http://web.taranis.org/drraw/] provide a comprehensive network monitoring solution similar to MRTG[http://en.wikipedia.org/wiki/MRTG], Criket[http://cricket.sourceforge.net/], and Cacti[http://en.wikipedia.org/wiki/Cacti_%28software%29].
+
+CollectSNMP works with four data structure types: data class, host class, writer object and task object. 
+
+An instance of data class is comprised of {SNMP OIDs}[http://en.wikipedia.org/wiki/Object_identifier] that described the monitored object. Data class has the following class variables: _name_ - reference name, _instance_ - SNMP name information OID, _values_ - SNMP value OIDs delimitated by space, _dst_ - data type (e.g. counter or gauge), and _range_ - data range.
+
+A host class object contains information about the host responding to SNMP queries. Host class variables are: _name_ - reference name, _idprefix_ - numerical ID to be used for DRRAW indexing, _address+ - IP address of the host, _version_ - SNMP protocol version to be used to construct queries, and _community_ - SNMP community query parameter.
+
+Writer base class is a parent class extended to customize record saving processes. CSV and RRD writer classes are both extensions of the base writer class. CSV writer saves SNMP query results into {Comma-Separated Values}[http://en.wikipedia.org/wiki/Comma-separated_values] formatted files. RRD writer saves SNMP query results into {Round Robin Database}[http://en.wikipedia.org/wiki/RRDtool] formatted files.
+
+Task objects carry out the bulk of CollectSNMP work. Base task class provides common task functionality - exception handling and logging. Hub task class controls the operation of other tasks. DRRAW task updated DRRAW configuration based on collected SNMP data. By querying a set of data objects on a given host object, a poll task collects SNMP records writes collected records using specified writers.
+
+
+== Example
+
+The example program bin/collectsnmp reads an XML configuration and runs background execution of configured SNMP polling tasks. A typical SNMP polling tasks runs an SNMP walk request on a group of OIDs and writes the results into RRD files.
+
+
+== Example XML configuration file
+
+	<snmp>
+	<datatypes type="array">
+	<datadef>
+		<name>ifmib-if-octets64</name>
+		<instance>1.3.6.1.2.1.31.1.1.1.1</instance>
+		<values>1.3.6.1.2.1.31.1.1.1.6 1.3.6.1.2.1.31.1.1.1.10</values>
+		<dst>COUNTER</dst>
+		<range>0:U</range>
+	</datadef>
+	<datadef>
+	<hosts type="array">
+		<hostdef>
+			<name>host1</name>
+			<idprefix>111</idprefix>
+			<address>1.1.1.1</address>
+			<version>2c</version>
+			<community>public</community>
+		</hostdef>
+	</hosts>
+	<writers type="array">
+		<writerdef>
+			<type>RRD</type>
+			<config>
+				<name>RRD1</name>
+				<rra>RRA:AVERAGE:0.5:1:4608 RRA:AVERAGE:0.5:5:4032</rra>
+				<write_path>/some/log/path</write_path>
+				<interval>150</interval>
+			</config>
+		</writerdef>
+	</writers>
+	<tasks type="array">
+		<taskdef>
+			<type>Poll</type>
+			<config>
+				<name>collect-host1</name>
+				<log_path>/some/log/path</log_path>
+				<host>host1</host>
+				<data>ifmib-if-octets64</data>
+				<interval>150</interval>
+				<writers>RRD1</writers>
+			</config>
+		</taskdef>
+		<taskdef>
+			<type>Drraw</type>
+			<config>
+				<name>drraw</name>
+				<interval>150</interval>
+				<log_path>/some/log/path</log_path>
+				<drraw_path>/some/drraw/path</drraw_path>
+				<rrd_path>/some/rrd/path</rrd_path>
+				<erb_path>/some/erb/path</erb_path>
+			</config>
+		</taskdef>
+	</tasks>
+	</snmp>
+
+
+== Copying
+CollectSNMP is Copyright (c) 2010,2011 by Artem Veremey.
+
+CollectSNMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License v2. CollectSNMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY. 
+
+== Contact
+Author:: Artem Veremey (artem@veremey.net)
