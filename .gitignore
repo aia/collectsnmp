@@ -10,6 +10,8 @@ doc
 
 # bundler
 .bundle
+Gemfile.lock
+collectsnmp.gemspec
 
 # jeweler generated
 pkg
