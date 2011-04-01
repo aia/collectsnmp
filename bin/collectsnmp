@@ -3,6 +3,7 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 
 require 'rubygems'
+require 'daemons'
 require 'xmlsimple'
 require 'pp'
 require 'collectsnmp'
@@ -17,4 +18,5 @@ CollectSnmp::load(
 	out["tasks"]["taskdef"]
 )
 
+Daemons.daemonize(:app_name => "collectsnmp.rb")
 CollectSnmp::Tasks::hub.run
