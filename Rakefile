@@ -41,7 +41,7 @@ namespace :coverage do
     rm_f "coverage/coverage.data"
     rm_rf "coverage"
     mkdir "coverage"
-    rcov = %(rcov -T --aggregate coverage/coverage.data -Ilib --html -o coverage test/test_*.rb)
+    rcov = %(rcov -T --aggregate coverage/coverage.data --exclude /gems/,/Library/,/usr/,spec,lib/tasks -Ilib --html -o coverage test/test_*.rb)
     system rcov
     #system "open doc/coverage/index.html" #if PLATFORM['darwin']
   end
@@ -52,7 +52,7 @@ namespace :coverage do
     rm_f "coverage/coverage.data"
     rm_rf "coverage"
     mkdir "coverage"
-    rcov = %(rcov -T  --text-coverage --aggregate coverage/coverage.data -Ilib --html -o coverage test/test_*.rb)
+    rcov = %(rcov -T  --text-coverage --aggregate coverage/coverage.data --exclude /gems/,/Library/,/usr/,spec,lib/tasks -Ilib --html -o coverage test/test_*.rb)
     system rcov
     #system "open doc/coverage/index.html" #if PLATFORM['darwin']
   end
