@@ -2,18 +2,18 @@
 Dir["#{File.dirname(__FILE__)}/writers/*.rb"].sort.each { |f| require f }
 
 module CollectSnmp
-	module Writers
-		extend self
+  module Writers
+    extend self
 
-		attr_reader :list
+    attr_reader :list
  
-		def load(writers)
-			@list = {}
-			writers.each do |writer|
-				@list[writer['config']['name']] = 
-					Object.const_get(:CollectSnmp).const_get(:Writers).const_get(writer['type']).new(writer['config'])
-			end
-		end
+    def load(writers)
+      @list = {}
+      writers.each do |writer|
+        @list[writer['config']['name']] = 
+          Object.const_get(:CollectSnmp).const_get(:Writers).const_get(writer['type']).new(writer['config'])
+      end
+    end
 
-	end
+  end
 end

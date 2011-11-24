@@ -1,5 +1,5 @@
 v2.0.0 Rewrite
-	* Modularized code
-	* Added unit tests
-	* Improved maintainability
-	* Created gem
+  * Modularized code
+  * Added unit tests
+  * Improved maintainability
+  * Created gem
