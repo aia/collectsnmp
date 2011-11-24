@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
-require File.dirname(__FILE__) + '/helper'
+$LOAD_PATH.unshift File.dirname(__FILE__)
+
+require 'helper'
 
 class TasksHubTest < Test::Unit::TestCase
 	include TestData
