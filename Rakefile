@@ -35,27 +35,18 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-namespace :coverage do
-  desc "Test coverage"
-  task :brief do
-    rm_f "coverage/coverage.data"
-    rm_rf "coverage"
-    mkdir "coverage"
-    rcov = %(rcov -T --aggregate coverage/coverage.data --exclude /gems/,/Library/,/usr/,spec,lib/tasks -Ilib --html -o coverage test/test_*.rb)
-    system rcov
-    #system "open doc/coverage/index.html" #if PLATFORM['darwin']
-  end
+require 'rcov/rcovtask'
+desc "Code coverage brief"
+Rcov::RcovTask.new("rcov:brief") do |task|
+  task.test_files = FileList['test/**/test_*.rb']
+  task.rcov_opts << '--exclude /gems/,/Library/,/usr/,spec,lib/tasks'
+end
 
-
-  desc "Show coverage detail"
-  task :detail do
-    rm_f "coverage/coverage.data"
-    rm_rf "coverage"
-    mkdir "coverage"
-    rcov = %(rcov -T  --text-coverage --aggregate coverage/coverage.data --exclude /gems/,/Library/,/usr/,spec,lib/tasks -Ilib --html -o coverage test/test_*.rb)
-    system rcov
-    #system "open doc/coverage/index.html" #if PLATFORM['darwin']
-  end
+desc "Code coverage detail"
+Rcov::RcovTask.new("rcov:detail") do |task|
+  task.test_files = FileList['test/**/test_*.rb']
+  task.rcov_opts << '--exclude /gems/,/Library/,/usr/,spec,lib/tasks'
+  task.rcov_opts << '--text-coverage'
 end
 
 task :default => :test
@@ -78,11 +69,11 @@ end
 
 require 'metric_fu'
 MetricFu::Configuration.run do |config|
-        #config.metrics  = [:churn, :saikuro, :stats, :flog, :flay]
-        config.metrics  = [:saikuro, :flog, :flay, :rcov, :roodi, :reek]
-        #config.graphs   = [:flog, :flay, :stats]
-        config.graphs   = [:flog, :flay, :rcov, :roodi, :reek]
-        config.rcov[:test_files] = ['test/**/test_*.rb']
+  #config.metrics  = [:churn, :saikuro, :stats, :flog, :flay]
+  config.metrics  = [:saikuro, :flog, :flay, :rcov, :roodi, :reek]
+  #config.graphs   = [:flog, :flay, :stats]
+  config.graphs   = [:flog, :flay, :rcov, :roodi, :reek]
+  config.rcov[:test_files] = ['test/**/test_*.rb']
 end
 
 desc "Clear data files"
