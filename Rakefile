@@ -49,6 +49,11 @@ Rcov::RcovTask.new("rcov:detail") do |task|
   task.rcov_opts << '--text-coverage'
 end
 
+task :coverme do
+  require 'cover_me'
+  CoverMe.complete!
+end
+
 task :default => :test
 
 require 'rdoc/task'

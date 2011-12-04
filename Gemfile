@@ -12,4 +12,6 @@ group :development do
   gem "rcov", ">= 0"
   gem "metric_fu", ">= 0"
   gem "flexmock", ">= 0"
+  gem "simplecov", ">= 0"
+  #gem "simplecov-rcov", ">= 0"
 end

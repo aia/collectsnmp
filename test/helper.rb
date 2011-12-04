@@ -1,10 +1,28 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 
+require 'simplecov'
+#require 'simplecov-rcov'
+
+#SimpleCov.formatter = SimpleCov::Formatter::RcovTextFormatter
+#SimpleCov.formatter = SimpleCov::Formatter::SimpleFormatter
+
+SimpleCov.start do
+  add_filter "/test/"
+end
+
+#SimpleCov.at_exit do
+  #SimpleCov.result.format!
+  #form = SimpleCov::Formatter::SimpleFormatter.new
+  #pp SimpleCov.result
+#end
+
 require 'test/unit'
-require 'collectsnmp'
+#require 'collectsnmp'
 require 'shoulda'
 require 'flexmock'
 require 'pp'
+
+require 'collectsnmp'
 
 module TestData
   include FlexMock::TestCase
